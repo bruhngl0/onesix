@@ -150,6 +150,40 @@ export default function Footer() {
           color: rgba(255,255,255,0.35);
           margin-top: 4px;
         }
+
+        /* ── Mobile responsiveness ── */
+        @media (max-width: 768px) {
+          .footer {
+            max-height: none;
+            height: auto;
+          }
+          .footer-content {
+            min-height: auto;
+            padding: 40px 20px;
+            gap: 40px;
+          }
+          .footer-top {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 24px;
+          }
+          .footer-contact {
+            text-align: left;
+          }
+          .footer-bottom {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 24px;
+            width: 100%;
+          }
+          .footer-right {
+            align-items: flex-start;
+            width: 100%;
+          }
+          .footer-bg {
+            object-fit: cover;
+          }
+        }
       `}</style>
 
             <footer className="footer">

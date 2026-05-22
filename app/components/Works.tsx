@@ -2,9 +2,14 @@
 
 import { useRef, useState } from "react";
 import { Video, ImageKitProvider, Image } from "@imagekit/react";
-import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValueEvent,
+} from "framer-motion";
 
-const works = [
+export const works = [
   {
     index: "01 / 11",
     brand: "Wingstop UK",
@@ -198,7 +203,7 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
         }
 
         .work-brand { font-family: 'TGFont', sans-serif; font-size: clamp(35px, 12vw, 100px); font-weight: 900; font-style: normal; text-transform: uppercase; line-height: 0.8; letter-spacing: -0.08em; }
-        .work-title { font-size: 24px; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8; margin-top: 0px; font-style: italic; font-weight: 700; letter-spacing: -0.007em;}
+        .work-title { font-size: 24px; text-transform: uppercase; opacity: 0.8; margin-top: 0px; font-style: italic; font-weight: 700; letter-spacing: -0.007em;}
         .work-index { font-size: 12px; opacity: 0.4; margin-top: 5px; }
 
         .work-cta {
@@ -208,6 +213,20 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
           pointer-events: auto; transition: 0.3s;
         }
         .work-cta:hover { background: white; color: black; }
+
+        @media (max-width: 768px) {
+          .work-ui {
+            padding: 20px;
+          }
+          .work-title {
+            font-size: 16px;
+            margin-top: 4px;
+          }
+          .work-cta {
+            padding: 8px 20px;
+            font-size: 11px;
+          }
+        }
       `}</style>
 
       <motion.div className="slide-inner" style={{ y: yOffset }}>
@@ -221,15 +240,27 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
             </ImageKitProvider>
           ) : work.brand === "Wingstop UK" ? (
             <ImageKitProvider urlEndpoint="https://ik.imagekit.io/onesix">
-              <Image src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/videoframe_1714-min-optimized.jpg.jpeg?updatedAt=1779162547441" alt="Wingstop UK" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              <Image
+                src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/videoframe_1714-min-optimized.jpg.jpeg?updatedAt=1779162547441"
+                alt="Wingstop UK"
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
             </ImageKitProvider>
           ) : work.brand === "Nike Football" ? (
             <ImageKitProvider urlEndpoint="https://ik.imagekit.io/onesix">
-            <img src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/NIKE2405_ViniJrDisruptor_ProductStills_Shot_06_220224_AB_0014-1-scaled-optimized.jpg.jpeg?updatedAt=1779162547523" alt="Nike Football" className="fallback-image" />
+              <img
+                src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/NIKE2405_ViniJrDisruptor_ProductStills_Shot_06_220224_AB_0014-1-scaled-optimized.jpg.jpeg?updatedAt=1779162547523"
+                alt="Nike Football"
+                className="fallback-image"
+              />
             </ImageKitProvider>
           ) : work.brand === "Under Armour" ? (
             <ImageKitProvider urlEndpoint="https://ik.imagekit.io/onesix">
-            <img src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/ROSS-STILLS_1.44.1-1-min-2048x1152-optimized.png.?updatedAt=1779162547539" alt="Under Armour" className="fallback-image" />
+              <img
+                src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/ROSS-STILLS_1.44.1-1-min-2048x1152-optimized.png.?updatedAt=1779162547539"
+                alt="Under Armour"
+                className="fallback-image"
+              />
             </ImageKitProvider>
           ) : (
             <div style={{ background: "#111", height: "100%" }} />
@@ -248,9 +279,6 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
             <p className="work-title">{work.title}</p>
             <p className="work-index">{work.index}</p>
           </div>
-          <a href={work.href} className="work-cta">
-            [ VIEW WORK ]
-          </a>
         </div>
       </motion.div>
     </section>

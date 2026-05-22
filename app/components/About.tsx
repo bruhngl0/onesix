@@ -78,6 +78,24 @@ font-weight: 800;
           display: inline-block;
           transition: transform 0.2s ease;
         }
+
+        /* ── Mobile & Tablet responsiveness ── */
+        @media (max-width: 768px) {
+          .about-section {
+            padding: 60px 0 80px 0;
+            min-height: auto;
+          }
+          .about-sub {
+            margin-top: 40px;
+            padding: 0 20px;
+          }
+          .about-sub-title {
+            font-size: 13px; /* Ensure subtitle text stays highly readable */
+          }
+          .about-cta {
+            font-size: 12px;
+          }
+        }
       `}</style>
 
       <section className="about-section">

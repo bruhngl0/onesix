@@ -24,7 +24,7 @@ const Company = () => {
       <style>{`
         @font-face {
           font-family: 'TGFont';
-          src: url('/tg.otf') format('opentype')
+          src: url('/tg.otf') format('opentype');
           font-display: swap;
         }
 
@@ -48,7 +48,7 @@ const Company = () => {
         .company-heading {
           font-family: 'TGFont', sans-serif;
           font-weight: 400;
-          font-size: clamp(96px, 7vw, 72px);
+          font-size: clamp(32px, 7.5vw, 96px);
           line-height: 0.8em;
           text-transform: uppercase;
           color: #000;
@@ -63,11 +63,10 @@ const Company = () => {
           display: block;
         }
 
-
-        .work-with-us{
+        .work-with-us {
           font-family: 'TGFont', sans-serif;
           font-weight: 400;
-          font-size: clamp(96px, 7vw, 72px);
+          font-size: clamp(36px, 8.5vw, 120px);
           line-height: 0.8em;
           text-transform: uppercase;
           color: #000;
@@ -76,6 +75,20 @@ const Company = () => {
           padding-top: 14rem;
           padding-bottom: 2rem;
           margin-bottom: 80px;
+        }
+
+        /* Mobile overrides for spacings */
+        @media (max-width: 768px) {
+          .company-heading {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            margin-bottom: 40px;
+          }
+          .work-with-us {
+            padding-top: 5rem;
+            padding-bottom: 1rem;
+            margin-bottom: 40px;
+          }
         }
 
         /* Logo Row */
