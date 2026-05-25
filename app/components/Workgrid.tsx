@@ -97,7 +97,7 @@ const WORK_ITEMS: WorkItem[] = [
       "https://brandingthatslaps.com/wp-content/uploads/2026/03/Screen-Shot-2026-03-03-at-10.46.40-AM-300x200-optimized.png",
     imageWidth: 2560,
     imageHeight: 1440,
-
+    imageSizes: "20vw",
     video:
       "https://brandingthatslaps.com/wp-content/uploads/2026/03/06-ON-REPEAT.mp4",
     href: "work/gymshark/",
