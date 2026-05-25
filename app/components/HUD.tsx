@@ -109,31 +109,39 @@ export default function HUD() {
         }
 
         /* ── Menu overlay ── */
-        .hud-overlay {
-          position: fixed;
-          top: 0; left: 0;
-          margin: var(--hud-margin);
-          width: calc(100% - var(--hud-margin) * 2);
-          height: 1px;
-          opacity: 0;
-          pointer-events: none;
-          background: rgba(255, 255, 255, 0.35);
-          backdrop-filter: blur(30px);
-          -webkit-backdrop-filter: blur(30px);
-          z-index: 400;
-          display: flex;
-          align-items: center;
-          justify-content: flex-start;
-          transition:
-            height 0.35s var(--hud-curve),
-            opacity 0.35s var(--hud-curve);
-          overflow: hidden;
-        }
-        .hud-overlay--open {
-          height: calc(100dvh - var(--hud-margin) * 2);
-          opacity: 1;
-          pointer-events: all;
-        }
+.hud-overlay { position: fixed;
+  top: 0;
+  left: 0;
+  margin: var(--hud-margin);
+  width: calc(100% - var(--hud-margin) * 2);
+  height: calc(100svh - var(--hud-margin) * 2);
+  opacity: 0;
+  pointer-events: none;
+
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+
+  transform: scaleY(0.001);
+  transform-origin: top;
+  will-change: transform, opacity;
+
+  transition:
+    transform 0.35s var(--hud-curve),
+    opacity 0.25s var(--hud-curve);
+}
+
+.hud-overlay--open {
+  transform: scaleY(1);
+  opacity: 1;
+  pointer-events: all;
+}
 
         .hud-nav-link {
           font-size: clamp(2.5rem, 8vw, 8rem);
@@ -228,7 +236,16 @@ export default function HUD() {
           .hud-menu  { top: 10px; font-size: 11px; }
           .hud-scroll, .hud-times { display: none; }
           .hud-tunes { bottom: 14px; right: 14px; font-size: 11px; }
-.hud-nav-link{font-size: 6rem;}
+ .hud-nav-link {
+    font-size: clamp(3.8rem, 16vw, 6rem);
+    padding-left: 1.5rem;
+  }
+
+ .hud-overlay {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.72);
+  }
         }
       `}</style>
 
