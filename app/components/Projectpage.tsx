@@ -2,10 +2,40 @@
 
 import { useState, useRef, useEffect } from "react";
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type MediaType = "video" | "image";
+
+interface MediaObject {
+  type: MediaType;
+  src: string;
+  poster?: string;
+}
+
+interface MediaItemProps {
+  item: MediaObject | null;
+  fill?: boolean;
+}
+
+interface MediaBlock {
+  layout: "full" | "two-col" | "three-col" | "two-col-asymmetric";
+  media: MediaObject | MediaObject[];
+  aspectRatio?: string;
+}
+
+interface ProjectPageProps {
+  client?: string;
+  title?: string;
+  description?: string;
+  services?: string[];
+  heroMedia?: MediaObject | null;
+  mediaBlocks?: MediaBlock[];
+}
+
 // ─── MediaItem ───────────────────────────────────────────────────────────────
 
-const MediaItem = ({ item, fill = false }) => {
-  const videoRef = useRef(null);
+const MediaItem = ({ item, fill = false }: MediaItemProps) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -21,7 +51,7 @@ const MediaItem = ({ item, fill = false }) => {
 
   if (!item) return null;
 
-  const wrapStyle = {
+  const wrapStyle: React.CSSProperties = {
     position: "relative",
     width: "100%",
     height: fill ? "100%" : "auto",
@@ -31,18 +61,18 @@ const MediaItem = ({ item, fill = false }) => {
   };
 
   if (item.type === "video") {
-    const togglePlay = (e) => {
+    const togglePlay = (e: React.MouseEvent) => {
       e.stopPropagation();
       if (!videoRef.current) return;
       playing ? videoRef.current.pause() : videoRef.current.play();
     };
-    const toggleMute = (e) => {
+    const toggleMute = (e: React.MouseEvent) => {
       e.stopPropagation();
       if (!videoRef.current) return;
       videoRef.current.muted = !muted;
       setMuted(!muted);
     };
-    const toggleFS = (e) => {
+    const toggleFS = (e: React.MouseEvent) => {
       e.stopPropagation();
       if (videoRef.current?.requestFullscreen)
         videoRef.current.requestFullscreen();
@@ -66,7 +96,6 @@ const MediaItem = ({ item, fill = false }) => {
             objectFit: "cover",
           }}
         />
-        {/* Controls overlay */}
         <div className="slaps-controls">
           <button
             className="slaps-ctrl slaps-ctrl--play"
@@ -85,7 +114,6 @@ const MediaItem = ({ item, fill = false }) => {
             )}
           </button>
 
-          {/* Progress bar */}
           <div className="slaps-progress">
             <div
               className="slaps-progress__fill"
@@ -176,20 +204,23 @@ const MediaItem = ({ item, fill = false }) => {
   );
 };
 
-// ─── Auto-layout engine ───────────────────────────────────────────────────────
+// ─── Block renderers ──────────────────────────────────────────────────────────
 
-const BLOCK_RENDERERS = {
+const BLOCK_RENDERERS: Record<
+  string,
+  (block: MediaBlock, i: number) => React.ReactNode
+> = {
   full: (block, i) => (
     <div key={i} className="slaps-block slaps-block--full">
       <div style={{ aspectRatio: block.aspectRatio || "16/9", width: "100%" }}>
-        <MediaItem item={block.media} fill />
+        <MediaItem item={block.media as MediaObject} fill />
       </div>
     </div>
   ),
 
   "two-col": (block, i) => (
     <div key={i} className="slaps-block slaps-block--two-col">
-      {block.media.map((m, j) => (
+      {(block.media as MediaObject[]).map((m, j) => (
         <div key={j} style={{ aspectRatio: block.aspectRatio || "3/2" }}>
           <MediaItem item={m} fill />
         </div>
@@ -199,7 +230,7 @@ const BLOCK_RENDERERS = {
 
   "three-col": (block, i) => (
     <div key={i} className="slaps-block slaps-block--three-col">
-      {block.media.map((m, j) => (
+      {(block.media as MediaObject[]).map((m, j) => (
         <div key={j} style={{ aspectRatio: block.aspectRatio || "3/2" }}>
           <MediaItem item={m} fill />
         </div>
@@ -213,13 +244,13 @@ const BLOCK_RENDERERS = {
         className="slaps-block--asymmetric__big"
         style={{ aspectRatio: "4/3" }}
       >
-        <MediaItem item={block.media[0]} fill />
+        <MediaItem item={(block.media as MediaObject[])[0]} fill />
       </div>
       <div
         className="slaps-block--asymmetric__small"
         style={{ aspectRatio: "3/4" }}
       >
-        <MediaItem item={block.media[1]} fill />
+        <MediaItem item={(block.media as MediaObject[])[1]} fill />
       </div>
     </div>
   ),
@@ -234,20 +265,18 @@ export default function ProjectPage({
   services = [],
   heroMedia = null,
   mediaBlocks = [],
-}) {
+}: ProjectPageProps) {
   return (
     <>
       <style>{CSS}</style>
 
       <div className="slaps-page">
-        {/* ── HERO ── */}
         {heroMedia && (
           <div className="slaps-hero">
             <MediaItem item={heroMedia} fill />
           </div>
         )}
 
-        {/* ── INFO BLOCK ── */}
         <div className="slaps-info">
           <div className="slaps-info__left">
             <p className="slaps-info__client">{client}</p>
@@ -267,7 +296,6 @@ export default function ProjectPage({
           </div>
         </div>
 
-        {/* ── MEDIA BLOCKS ── */}
         <div className="slaps-media-section">
           {mediaBlocks.map((block, i) => {
             const renderer = BLOCK_RENDERERS[block.layout];
@@ -300,20 +328,13 @@ const CSS = `
     aspect-ratio: 16 / 8;
     background: #0d0d0d;
     overflow: hidden;
-    /* 12px top, 12px left, 12px right, 0 bottom — connects flush to info block */
     margin: 12px 12px 0;
-margin-top: 2.8rem;
+    margin-top: 2.8rem;
   }
-  .slaps-hero .slaps-media {
-    width: 100%;
-    height: 100%;
-  }
+  .slaps-hero .slaps-media { width: 100%; height: 100%; }
   .slaps-hero video,
   .slaps-hero img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+    width: 100%; height: 100%; object-fit: cover; display: block;
   }
 
   /* ── INFO ── */
@@ -323,7 +344,7 @@ margin-top: 2.8rem;
     padding: 48px 40px 44px;
     gap: 40px;
     border-bottom: 1px solid rgba(0,0,0,0.08);
-margin-top: 1rem;
+    margin-top: 1rem;
   }
   .slaps-info__client {
     font-family: 'DM Mono', monospace;
@@ -355,76 +376,43 @@ margin-top: 1rem;
     gap: 8px;
     flex-wrap: wrap;
   }
-  .slaps-services__label {
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    color: rgba(0,0,0,0.3);
-  }
-  .slaps-services__x {
-    font-size: 9px;
-    color: rgba(0,0,0,0.2);
-  }
-  .slaps-services__list {
-    font-size: 9.5px;
-    letter-spacing: 0.1em;
-    color: rgba(0,0,0,0.45);
-    line-height: 1.7;
-  }
+  .slaps-services__label { font-size: 9px; letter-spacing: 0.2em; color: rgba(0,0,0,0.3); }
+  .slaps-services__x { font-size: 9px; color: rgba(0,0,0,0.2); }
+  .slaps-services__list { font-size: 9.5px; letter-spacing: 0.1em; color: rgba(0,0,0,0.45); line-height: 1.7; }
 
   /* ── MEDIA SECTION ── */
   .slaps-media-section {
     display: flex;
     flex-direction: column;
-    gap: 30px;        /* bigger gap between rows */
-    padding: 12px;    /* outer margin matches hero sides */
+    gap: 30px;
+    padding: 12px;
   }
 
-  /* Each block is full width within the padded section */
   .slaps-block { width: 100%; line-height: 0; overflow: hidden; }
 
   .slaps-block--full { display: block; }
   .slaps-block--full .slaps-media,
   .slaps-block--full video,
-  .slaps-block--full img {
-    width: 100%; height: 100%; display: block; object-fit: cover;
-  }
+  .slaps-block--full img { width: 100%; height: 100%; display: block; object-fit: cover; }
 
-  .slaps-block--two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4px;         /* smaller gap between items within a row */
-  }
+  .slaps-block--two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
   .slaps-block--two-col > div { overflow: hidden; width: 100%; }
   .slaps-block--two-col .slaps-media,
   .slaps-block--two-col video,
-  .slaps-block--two-col img {
-    width: 100%; height: 100%; display: block; object-fit: cover;
-  }
+  .slaps-block--two-col img { width: 100%; height: 100%; display: block; object-fit: cover; }
 
-  .slaps-block--three-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 4px;         /* smaller gap between items within a row */
-  }
+  .slaps-block--three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
   .slaps-block--three-col > div { overflow: hidden; width: 100%; }
   .slaps-block--three-col .slaps-media,
   .slaps-block--three-col video,
-  .slaps-block--three-col img {
-    width: 100%; height: 100%; display: block; object-fit: cover;
-  }
+  .slaps-block--three-col img { width: 100%; height: 100%; display: block; object-fit: cover; }
 
-  .slaps-block--asymmetric {
-    display: flex;
-    align-items: stretch;
-    gap: 4px;         /* smaller gap between items within a row */
-  }
+  .slaps-block--asymmetric { display: flex; align-items: stretch; gap: 4px; }
   .slaps-block--asymmetric__big { flex: 0 0 calc(63% - 2px); overflow: hidden; }
   .slaps-block--asymmetric__small { flex: 1; overflow: hidden; }
   .slaps-block--asymmetric .slaps-media,
   .slaps-block--asymmetric video,
-  .slaps-block--asymmetric img {
-    width: 100%; height: 100%; display: block; object-fit: cover;
-  }
+  .slaps-block--asymmetric img { width: 100%; height: 100%; display: block; object-fit: cover; }
 
   /* ── VIDEO CONTROLS ── */
   .slaps-controls {
@@ -441,54 +429,34 @@ margin-top: 1rem;
   .slaps-media:hover .slaps-controls { opacity: 1; }
 
   .slaps-ctrl {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
+    background: none; border: none; cursor: pointer; padding: 0;
     color: rgba(255,255,255,0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: color 0.15s;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: color 0.15s;
   }
   .slaps-ctrl:hover { color: #fff; }
 
   .slaps-progress {
-    flex: 1;
-    height: 1px;
+    flex: 1; height: 1px;
     background: rgba(255,255,255,0.2);
-    position: relative;
-    cursor: pointer;
+    position: relative; cursor: pointer;
   }
   .slaps-progress__fill {
-    position: absolute;
-    left: 0; top: 0;
-    height: 100%;
+    position: absolute; left: 0; top: 0; height: 100%;
     background: rgba(255,255,255,0.8);
     transition: width 0.1s linear;
   }
 
   /* ── RESPONSIVE ── */
   @media (max-width: 768px) {
-    .slaps-hero {
-      width: calc(100% - 16px);
-      margin: 8px 8px 0;
-    }
-    .slaps-info {
-      grid-template-columns: 1fr;
-      padding: 32px 20px;
-      gap: 24px;
-    }
+    .slaps-hero { width: calc(100% - 16px); margin: 8px 8px 0; }
+    .slaps-info { grid-template-columns: 1fr; padding: 32px 20px; gap: 24px; }
     .slaps-block--three-col { grid-template-columns: 1fr 1fr; }
     .slaps-block--three-col > div:last-child:nth-child(3) { grid-column: 1 / -1; }
   }
 
   @media (max-width: 480px) {
-    .slaps-hero {
-      width: calc(100% - 12px);
-      margin: 6px 6px 0;
-    }
+    .slaps-hero { width: calc(100% - 12px); margin: 6px 6px 0; }
     .slaps-block--two-col,
     .slaps-block--three-col { grid-template-columns: 1fr; }
     .slaps-block--asymmetric { flex-direction: column; }
