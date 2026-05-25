@@ -27,6 +27,7 @@ interface WorkItem {
   clients: string[];
   services: string[];
   industries: string[];
+  imageSrcSet: string;
 }
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -42,7 +43,7 @@ const WORK_ITEMS: WorkItem[] = [
       "https://brandingthatslaps.com/wp-content/uploads/2026/04/07-optimized.png 2052w, https://brandingthatslaps.com/wp-content/uploads/2026/04/07-300x200-optimized.png 300w, https://brandingthatslaps.com/wp-content/uploads/2026/04/07-1024x683-optimized.png 1024w, https://brandingthatslaps.com/wp-content/uploads/2026/04/07-768x512-optimized.png 768w, https://brandingthatslaps.com/wp-content/uploads/2026/04/07-1536x1025-optimized.png 1536w, https://brandingthatslaps.com/wp-content/uploads/2026/04/07-2048x1366-optimized.png 2048w",
     imageSizes: "20vw",
     video: "https://brandingthatslaps.com/wp-content/uploads/2026/04/05.mp4",
-    href: "https://brandingthatslaps.com/work/episode-1-full-access-with-rakai/",
+    href: "/work/episode-1-full-access-with-rakai/",
     clients: ["Under Armour"],
     services: [
       "Creative Direction",
@@ -61,7 +62,7 @@ const WORK_ITEMS: WorkItem[] = [
       "https://brandingthatslaps.com/wp-content/uploads/2026/03/Screen-Shot-2026-03-04-at-12.18.32-PM-scaled-optimized.png",
     video:
       "https://brandingthatslaps.com/wp-content/uploads/2026/03/11-AUTOPLAY-_-REPEAT-.mp4",
-    href: "https://brandingthatslaps.com/work/endure/",
+    href: "work/endure/",
     clients: ["Wilson"],
     services: [
       "Campaign Strategy",
@@ -82,7 +83,7 @@ const WORK_ITEMS: WorkItem[] = [
       "https://brandingthatslaps.com/wp-content/uploads/2026/03/Screen-Shot-2026-03-03-at-10.46.40-AM-300x200-optimized.png",
     video:
       "https://brandingthatslaps.com/wp-content/uploads/2026/03/06-ON-REPEAT.mp4",
-    href: "https://brandingthatslaps.com/work/gymshark/",
+    href: "work/gymshark/",
     clients: ["Gymshark"],
     services: [
       "Creative Direction",
@@ -105,7 +106,7 @@ const WORK_ITEMS: WorkItem[] = [
     imageHeight: 1440,
     video:
       "https://brandingthatslaps.com/wp-content/uploads/2025/12/02-1-1.mp4",
-    href: "https://brandingthatslaps.com/work/the-disciplined-napthlete/",
+    href: "work/the-disciplined-napthlete/",
     clients: ["AM: CLUB"],
     services: ["Creative Direction", "Creative Strategy", "Production"],
     industries: ["Lifestyle"],
@@ -123,7 +124,7 @@ const WORK_ITEMS: WorkItem[] = [
     imageHeight: 675,
     video:
       "https://brandingthatslaps.com/wp-content/uploads/2025/12/COVER-01-1.mp4",
-    href: "https://brandingthatslaps.com/work/subcultural-archives/",
+    href: "work/subcultural-archives/",
     clients: ["Nu Moda"],
     services: ["Brand Strategy", "Creative Direction", "Visual Identity"],
     industries: ["Luxury & Fashion"],
@@ -141,7 +142,7 @@ const WORK_ITEMS: WorkItem[] = [
     imageHeight: 675,
     video:
       "https://brandingthatslaps.com/wp-content/uploads/2025/12/COVER-UA.mp4",
-    href: "https://brandingthatslaps.com/work/the-halo-state-unlocks-your-aura/",
+    href: "work/the-halo-state-unlocks-your-aura/",
     clients: ["Under Armour"],
     services: ["Creative Direction", "Post Production", "Production"],
     industries: ["Sports"],
@@ -159,7 +160,7 @@ const WORK_ITEMS: WorkItem[] = [
     imageHeight: 675,
     video:
       "https://brandingthatslaps.com/wp-content/uploads/2025/09/533cb6c4-051cab9e-1.mp4",
-    href: "https://brandingthatslaps.com/work/its-hot-and-thats-cold/",
+    href: "work/its-hot-and-thats-cold/",
     clients: ["Wingstop UK"],
     services: ["Campaign Strategy", "Creative Direction", "Production"],
     industries: ["Food & Beverage"],
@@ -177,7 +178,7 @@ const WORK_ITEMS: WorkItem[] = [
     imageHeight: 581,
     video:
       "https://brandingthatslaps.com/wp-content/uploads/2025/12/COVER-PUMA.mp4",
-    href: "https://brandingthatslaps.com/work/keeping-up-with-ultras-2/",
+    href: "work/keeping-up-with-ultras-2/",
     clients: ["Puma"],
     services: ["Creative Direction", "Production"],
     industries: ["Sports"],
@@ -195,7 +196,7 @@ const WORK_ITEMS: WorkItem[] = [
     imageHeight: 675,
     video:
       "https://brandingthatslaps.com/wp-content/uploads/2025/12/CH2_FINAL_15s_16x9_1_1.mp4",
-    href: "https://brandingthatslaps.com/work/artifact-by-alexia-putellas/",
+    href: "work/artifact-by-alexia-putellas/",
     clients: ["Oakley"],
     services: ["Creative Direction", "Photography", "Production"],
     industries: ["Sports", "Luxury & Fashion"],
@@ -213,7 +214,7 @@ const WORK_ITEMS: WorkItem[] = [
     imageHeight: 850,
     video:
       "https://brandingthatslaps.com/wp-content/uploads/2025/12/COVER-JOGA.mp4",
-    href: "https://brandingthatslaps.com/work/joga-bonito/",
+    href: "work/joga-bonito/",
     clients: ["Nike"],
     services: ["Creative Direction", "Production", "Video"],
     industries: ["Sports"],
@@ -231,7 +232,7 @@ const WORK_ITEMS: WorkItem[] = [
     imageHeight: 701,
     video:
       "https://brandingthatslaps.com/wp-content/uploads/2025/12/COVER-UNVRS.mp4",
-    href: "https://brandingthatslaps.com/work/the-portal-opened-first/",
+    href: "work/the-portal-opened-first/",
     clients: ["[UNVRS]"],
     services: ["Brand Strategy", "Creative Direction", "Visual Identity"],
     industries: ["Lifestyle"],
@@ -249,7 +250,7 @@ const WORK_ITEMS: WorkItem[] = [
     imageHeight: 675,
     video:
       "https://brandingthatslaps.com/wp-content/uploads/2025/12/HI-IBIZA-COVER2-1.mp4",
-    href: "https://brandingthatslaps.com/work/become-one/",
+    href: "work/become-one/",
     clients: ["HÏ IBIZA"],
     services: ["Creative Direction", "Production", "Video"],
     industries: ["Music & Entertainment"],
@@ -434,8 +435,8 @@ export default function WorkGrid() {
 
         /* ── Filter bar ── */
         .filters {
-          position: fixed;
-          top: 0;
+          position: absolute;
+          top: 8%;
           left: 0;
           right: 0;
           z-index: 100;

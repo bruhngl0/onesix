@@ -94,10 +94,6 @@ export default function HUD() {
     router.push(NAV_ROUTES[item]);
   };
 
-  // HUD text is always white, except when menu is open → black (menu is frosted white)
-  const fg = isMenuOpen ? "#000" : "#fff";
-  const fgMuted = isMenuOpen ? "rgba(0,0,0,0.55)" : "rgba(255,255,255,0.6)";
-
   return (
     <>
       <style>{`
@@ -157,20 +153,43 @@ export default function HUD() {
         .hud-nav-link:hover { opacity: 0.45; }
 
         /* ── HUD shell ── */
+        /*
+          mix-blend-mode: difference is the magic:
+          - White (#fff) elements over dark backgrounds → appear white
+          - White (#fff) elements over white (#fff) backgrounds → invert to black
+          - Works automatically as user scrolls between dark video and white sections
+        */
         .hud-shell {
           position: fixed;
           inset: 0;
           pointer-events: none;
           z-index: 1000;
           font-family: 'Barlow Condensed', sans-serif;
+          /* Apply blend mode to entire shell so all children inherit context */
+          mix-blend-mode: difference;
+        }
+
+        /* When menu is open, we lift out of blend mode so the overlay reads correctly */
+        .hud-shell--menu-open {
+          mix-blend-mode: normal;
         }
 
         .hud-el {
           position: absolute;
           pointer-events: all;
           cursor: pointer;
-          transition: color 0.35s ease;
           user-select: none;
+          /* All HUD elements are white — blend mode does the inversion */
+          color: #fff;
+        }
+
+        .hud-el--no-pointer {
+          pointer-events: none;
+        }
+
+        /* When menu open, switch to black since overlay is frosted white */
+        .hud-shell--menu-open .hud-el {
+          color: #000;
         }
 
         .hud-logo  { top: 14px; left: 18px; }
@@ -187,7 +206,6 @@ export default function HUD() {
           top: 14px; right: 18px;
           font-size: 12px;
           letter-spacing: 0.14em;
-          pointer-events: none;
         }
         .hud-times {
           bottom: 18px; left: 18px;
@@ -195,7 +213,6 @@ export default function HUD() {
           letter-spacing: 0.12em;
           display: flex;
           gap: 18px;
-          pointer-events: none;
         }
         .hud-tunes {
           bottom: 18px; right: 18px;
@@ -214,7 +231,7 @@ export default function HUD() {
         }
       `}</style>
 
-      {/* Frosted menu overlay */}
+      {/* Frosted menu overlay — sits below hud-shell z-index */}
       <div className={`hud-overlay ${isMenuOpen ? "hud-overlay--open" : ""}`}>
         <nav>
           {NAV_ITEMS.map((item) => (
@@ -229,32 +246,30 @@ export default function HUD() {
         </nav>
       </div>
 
-      {/* HUD chrome */}
-      <div className="hud-shell">
-        <div className="hud-el hud-logo">
-          <SlapsLogo color={fg} />
+      {/* HUD chrome — mix-blend-mode: difference auto-inverts over any background */}
+      <div className={`hud-shell ${isMenuOpen ? "hud-shell--menu-open" : ""}`}>
+        {/* Logo: SVG fill must also be white for blend mode to work */}
+        <div className="hud-el hud-logo" onClick={() => router.push("/")}>
+          <SlapsLogo color={isMenuOpen ? "#000" : "#fff"} />
         </div>
 
         <div
           className="hud-el hud-menu"
-          style={{ color: fg }}
           onClick={() => setIsMenuOpen((o) => !o)}
         >
           {isMenuOpen ? "[ CLOSE ]" : "[ MENU ]"}
         </div>
 
-        <div className="hud-el hud-scroll" style={{ color: fgMuted }}>
+        <div className="hud-el hud-el--no-pointer hud-scroll">
           (SCROLL {scrollPct}%)
         </div>
 
-        <div className="hud-el hud-times" style={{ color: fgMuted }}>
+        <div className="hud-el hud-el--no-pointer hud-times">
           <span>BARCELONA ({currentTime.barcelona})</span>
           <span>NEW YORK ({currentTime.newYork})</span>
         </div>
 
-        <div className="hud-el hud-tunes" style={{ color: fg }}>
-          TUNES
-        </div>
+        <div className="hud-el hud-tunes">TUNES</div>
       </div>
     </>
   );
