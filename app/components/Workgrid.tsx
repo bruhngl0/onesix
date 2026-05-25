@@ -29,6 +29,8 @@ interface WorkItem {
   industries: string[];
   imageSrcSet: string;
   imageSizes: string;
+  imageWidth: number;
+  imageHeight: number;
 }
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -43,6 +45,9 @@ const WORK_ITEMS: WorkItem[] = [
     imageSrcSet:
       "https://brandingthatslaps.com/wp-content/uploads/2026/04/07-optimized.png 2052w, https://brandingthatslaps.com/wp-content/uploads/2026/04/07-300x200-optimized.png 300w, https://brandingthatslaps.com/wp-content/uploads/2026/04/07-1024x683-optimized.png 1024w, https://brandingthatslaps.com/wp-content/uploads/2026/04/07-768x512-optimized.png 768w, https://brandingthatslaps.com/wp-content/uploads/2026/04/07-1536x1025-optimized.png 1536w, https://brandingthatslaps.com/wp-content/uploads/2026/04/07-2048x1366-optimized.png 2048w",
     imageSizes: "20vw",
+    imageWidth: 2560,
+    imageHeight: 1440,
+
     video: "https://brandingthatslaps.com/wp-content/uploads/2026/04/05.mp4",
     href: "/work/episode-1-full-access-with-rakai/",
     clients: ["Under Armour"],
@@ -64,6 +69,12 @@ const WORK_ITEMS: WorkItem[] = [
     video:
       "https://brandingthatslaps.com/wp-content/uploads/2026/03/11-AUTOPLAY-_-REPEAT-.mp4",
     href: "work/endure/",
+    imageSrcSet:
+      "https://brandingthatslaps.com/wp-content/uploads/2026/03/Screen-Shot-2026-03-04-at-12.18.32-PM-scaled-optimized.png",
+    imageSizes: "20vw",
+    imageWidth: 2560,
+    imageHeight: 1440,
+
     clients: ["Wilson"],
     services: [
       "Campaign Strategy",
@@ -82,6 +93,11 @@ const WORK_ITEMS: WorkItem[] = [
     client: "Gymshark",
     image:
       "https://brandingthatslaps.com/wp-content/uploads/2026/03/Screen-Shot-2026-03-03-at-10.46.40-AM-300x200-optimized.png",
+    imageSrcSet:
+      "https://brandingthatslaps.com/wp-content/uploads/2026/03/Screen-Shot-2026-03-03-at-10.46.40-AM-300x200-optimized.png",
+    imageWidth: 2560,
+    imageHeight: 1440,
+
     video:
       "https://brandingthatslaps.com/wp-content/uploads/2026/03/06-ON-REPEAT.mp4",
     href: "work/gymshark/",
