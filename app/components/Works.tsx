@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { Video, ImageKitProvider, Image } from "@imagekit/react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
 
 export const works = [
   {
@@ -90,23 +90,79 @@ export const works = [
   },
 ];
 
+function WorkMedia({
+  work,
+  shouldPlay,
+}: {
+  work: (typeof works)[0];
+  shouldPlay: boolean;
+}) {
+  if (work.video) {
+    return (
+      <ImageKitProvider urlEndpoint="https://ik.imagekit.io/onesix">
+        {shouldPlay ? (
+          <Video
+            src={work.video}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+          />
+        ) : (
+          <div className="video-placeholder" />
+        )}
+      </ImageKitProvider>
+    );
+  }
+
+  if (work.brand === "Wingstop UK") {
+    return (
+      <ImageKitProvider urlEndpoint="https://ik.imagekit.io/onesix">
+        <Image
+          src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/videoframe_1714-min-optimized.jpg.jpeg?updatedAt=1779162547441"
+          alt="Wingstop UK"
+        />
+      </ImageKitProvider>
+    );
+  }
+
+  if (work.brand === "Nike Football") {
+    return (
+      <img
+        src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/NIKE2405_ViniJrDisruptor_ProductStills_Shot_06_220224_AB_0014-1-scaled-optimized.jpg.jpeg?updatedAt=1779162547523"
+        alt="Nike Football"
+        className="fallback-image"
+      />
+    );
+  }
+
+  if (work.brand === "Under Armour") {
+    return (
+      <img
+        src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/ROSS-STILLS_1.44.1-1-min-2048x1152-optimized.png.?updatedAt=1779162547539"
+        alt="Under Armour"
+        className="fallback-image"
+      />
+    );
+  }
+
+  return <div style={{ background: "#111" }} />;
+}
+
 function WorkSlide({ work }: { work: (typeof works)[0] }) {
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const isNearViewport = useInView(containerRef, {
+    margin: "250px 0px 250px 0px",
+    once: false,
+  });
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"],
   });
 
-  /**
-   * Desktop behavior preserved:
-   * inactive = blur + slight scale
-   * active = sharp + normal scale
-   *
-   * Difference:
-   * no React state updates on scroll.
-   * Framer Motion values handle it directly.
-   */
   const yOffset = useTransform(scrollYProgress, [0, 0.25, 1], [20, 0, 0]);
 
   const scale = useTransform(
@@ -184,6 +240,12 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
           inset: 0;
         }
 
+        .video-placeholder {
+          width: 100%;
+          height: 100%;
+          background: #111;
+        }
+
         .work-dimmer {
           z-index: 2;
           background: #000;
@@ -231,7 +293,6 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
           margin-bottom: 0;
         }
 
-        /* MOBILE ONLY FIXES */
         @media (max-width: 768px) {
           .work-slide {
             height: 50svh;
@@ -250,11 +311,6 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
             justify-content: flex-start !important;
           }
 
-          /*
-            Important:
-            Heavy blur on mobile video is the main visual glitch.
-            Desktop keeps the original blur effect.
-          */
           .work-media-wrap {
             filter: none !important;
             will-change: transform;
@@ -270,39 +326,7 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
             filter,
           }}
         >
-          {work.video ? (
-            <ImageKitProvider urlEndpoint="https://ik.imagekit.io/onesix">
-              <Video
-                src={work.video}
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-              />
-            </ImageKitProvider>
-          ) : work.brand === "Wingstop UK" ? (
-            <ImageKitProvider urlEndpoint="https://ik.imagekit.io/onesix">
-              <Image
-                src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/videoframe_1714-min-optimized.jpg.jpeg?updatedAt=1779162547441"
-                alt="Wingstop UK"
-              />
-            </ImageKitProvider>
-          ) : work.brand === "Nike Football" ? (
-            <img
-              src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/NIKE2405_ViniJrDisruptor_ProductStills_Shot_06_220224_AB_0014-1-scaled-optimized.jpg.jpeg?updatedAt=1779162547523"
-              alt="Nike Football"
-              className="fallback-image"
-            />
-          ) : work.brand === "Under Armour" ? (
-            <img
-              src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/ROSS-STILLS_1.44.1-1-min-2048x1152-optimized.png.?updatedAt=1779162547539"
-              alt="Under Armour"
-              className="fallback-image"
-            />
-          ) : (
-            <div style={{ background: "#111" }} />
-          )}
+          <WorkMedia work={work} shouldPlay={isNearViewport} />
         </motion.div>
 
         <motion.div
@@ -326,7 +350,7 @@ export default function Works() {
   return (
     <main style={{ background: "white" }}>
       {works.map((work, i) => (
-        <WorkSlide key={i} work={work} />
+        <WorkSlide key={`${work.brand}-${i}`} work={work} />
       ))}
     </main>
   );

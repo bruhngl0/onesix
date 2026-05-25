@@ -324,13 +324,13 @@ function WorkCard({ item }: { item: WorkItem }) {
           />
         </div>
 
-        {/* Text backdrop — always visible */}
+        {/* Text backdrop */}
         <div className="backdrop">
           <div className="project-text">
             <h2>{item.title}</h2>
             <h1 className="client">{item.client}</h1>
           </div>
-          <p className="see-case">SEE CASE</p>
+          <p className="see-case">SEE MORE</p>
         </div>
 
         {/* Hover video */}
@@ -443,10 +443,17 @@ export default function WorkGrid() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&display=swap');
 
+        @font-face {
+          font-family: 'TG';
+          src: url('/tg.otf') format('opentype');
+          font-weight: normal;
+          font-style: normal;
+        }
+
         .workgrid-root {
           background: #000;
           color: #fff;
-          font-family: 'Barlow Condensed', sans-serif;
+          font-family: 'TG', 'Barlow Condensed', sans-serif;
           min-height: 100vh;
         }
 
@@ -472,7 +479,7 @@ export default function WorkGrid() {
           background: none;
           border: none;
           color: rgba(255,255,255,0.55);
-          font-family: 'Barlow Condensed', sans-serif;
+          font-family: 'TG', 'Barlow Condensed', sans-serif;
           font-size: 11px;
           letter-spacing: 0.16em;
           text-transform: uppercase;
@@ -494,7 +501,7 @@ export default function WorkGrid() {
           background: none;
           border: none;
           color: rgba(255,255,255,0.55);
-          font-family: 'Barlow Condensed', sans-serif;
+          font-family: 'TG', 'Barlow Condensed', sans-serif;
           font-size: 11px;
           letter-spacing: 0.16em;
           text-transform: uppercase;
@@ -527,7 +534,7 @@ export default function WorkGrid() {
           background: none;
           border: none;
           color: rgba(255,255,255,0.65);
-          font-family: 'Barlow Condensed', sans-serif;
+          font-family: 'TG', 'Barlow Condensed', sans-serif;
           font-size: 11px;
           letter-spacing: 0.14em;
           text-transform: uppercase;
@@ -549,8 +556,8 @@ export default function WorkGrid() {
          
           padding: 0;
 
- margin: 12px;
-margin-top: 7rem;
+          margin: 12px;
+          margin-top: 7rem;
         }
 
         /* ── Card ── */
@@ -561,7 +568,7 @@ margin-top: 7rem;
           background: #0a0a0a;
           border: 1px solid #1a1a1a;
           display: block;
-margin:3px;
+          margin: 3px;
         }
 
         .project-link {
@@ -586,31 +593,35 @@ margin:3px;
           display: block;
         }
 
-        /* backdrop — always visible text layer */
+        /* backdrop — top-left and bottom-right layout */
         .backdrop {
           position: absolute;
           inset: 0;
           z-index: 3;
           display: flex;
           flex-direction: column;
-          justify-content: flex-end;
-          padding: 14px 16px;
+          justify-content: space-between;
+          padding: 16px;
           background: linear-gradient(
-            to top,
-            rgba(0, 0, 0, 0.72) 0%,
-            rgba(0, 0, 0, 0.12) 50%,
-            transparent 100%
+            to bottom,
+            rgba(0, 0, 0, 0.75) 0%,
+            rgba(0, 0, 0, 0.1) 50%,
+            rgba(0, 0, 0, 0.75) 100%
           );
+          opacity: 1; /* always visible on mobile */
+          pointer-events: none;
         }
 
         .project-text {
           display: flex;
           flex-direction: column;
           gap: 0;
+          align-self: flex-start;
+          text-align: left;
         }
 
         .project-text h2 {
-          font-family: 'Barlow Condensed', sans-serif;
+          font-family: 'TG', 'Barlow Condensed', sans-serif;
           font-size: 11px;
           font-weight: 700;
           letter-spacing: 0.1em;
@@ -621,7 +632,7 @@ margin:3px;
         }
 
         .project-text h1.client {
-          font-family: 'Barlow Condensed', sans-serif;
+          font-family: 'TG', 'Barlow Condensed', sans-serif;
           font-size: clamp(22px, 3.2vw, 40px);
           font-weight: 900;
           letter-spacing: -0.01em;
@@ -632,19 +643,14 @@ margin:3px;
         }
 
         .see-case {
+          font-family: 'TG', 'Barlow Condensed', sans-serif;
           font-size: 11px;
           letter-spacing: 0.18em;
           text-transform: uppercase;
           color: rgba(255,255,255,0.9);
-          margin: 10px 0 0;
-          opacity: 0;
-          transform: translateY(4px);
-          transition: opacity 0.25s ease, transform 0.25s ease;
-        }
-
-        .project-item:hover .see-case {
-          opacity: 1;
-          transform: translateY(0);
+          margin: 0;
+          align-self: flex-end;
+          opacity: 1; /* always visible on mobile */
         }
 
         /* attachment (hover video) — hidden by default, shown on hover */
@@ -676,6 +682,49 @@ margin:3px;
           .project-grid { grid-template-columns: 1fr; }
           .filters { padding: 8px 12px; }
           .filter-tab, .all-bracket { font-size: 10px; padding: 5px 8px; }
+        }
+
+        /* ── Desktop hover effects ── */
+        @media (min-width: 1025px) {
+          .backdrop {
+            opacity: 0;
+            padding: 24px;
+            background: linear-gradient(
+              to bottom,
+              rgba(0, 0, 0, 0.85) 0%,
+              rgba(0, 0, 0, 0.2) 50%,
+              rgba(0, 0, 0, 0.85) 100%
+            );
+            transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+          }
+
+          .project-text {
+            opacity: 0;
+            transform: translateY(-12px);
+            transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                        transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+          }
+
+          .see-case {
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                        transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+          }
+
+          .project-item:hover .backdrop {
+            opacity: 1;
+          }
+
+          .project-item:hover .project-text {
+            opacity: 1;
+            transform: translateY(0);
+          }
+
+          .project-item:hover .see-case {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
       `}</style>
 
