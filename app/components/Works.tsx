@@ -1,13 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { Video, ImageKitProvider, Image } from "@imagekit/react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useMotionValueEvent,
-} from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export const works = [
   {
@@ -103,19 +98,36 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
     offset: ["start end", "end start"],
   });
 
-  const [isActive, setIsActive] = useState(false);
-
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    // Narrower active window for 50vh blocks to ensure focus
-    if (latest >= 0.35 && latest < 0.65) {
-      setIsActive(true);
-    } else {
-      setIsActive(false);
-    }
-  });
-
-  // Vertical parallax/entrance effect
+  /**
+   * Desktop behavior preserved:
+   * inactive = blur + slight scale
+   * active = sharp + normal scale
+   *
+   * Difference:
+   * no React state updates on scroll.
+   * Framer Motion values handle it directly.
+   */
   const yOffset = useTransform(scrollYProgress, [0, 0.25, 1], [20, 0, 0]);
+
+  const scale = useTransform(
+    scrollYProgress,
+    [0, 0.35, 0.65, 1],
+    [1.1, 1, 1, 1.1],
+  );
+
+  const blurValue = useTransform(
+    scrollYProgress,
+    [0, 0.35, 0.65, 1],
+    [30, 0, 0, 30],
+  );
+
+  const filter = useTransform(blurValue, (value) => `blur(${value}px)`);
+
+  const dimOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.35, 0.65, 1],
+    [0.5, 0, 0, 0.5],
+  );
 
   return (
     <section ref={containerRef} className="work-slide">
@@ -125,27 +137,14 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
           src: url('/tg.otf') format('opentype');
           font-display: swap;
         }
-        
+
         .work-slide {
           position: relative;
           width: 100%;
-          height: 100vh; /* Desktop Default */
+          height: 100vh;
           background: #fff;
           overflow: hidden;
-        }
-
-        /* MOBILE HEIGHT OVERRIDE */
-        @media (max-width: 768px) {
-          .work-slide {
-            height: 50vh; 
-          }
-          .work-brand {
-            font-size: clamp(35px, 12vw, 60px) !important;
-          }
-          .work-ui {
-            padding: 20px !important;
-            justify-content: start !important; /* Centers text vertically in the 50vh block */
-          }
+          contain: layout paint;
         }
 
         .slide-inner {
@@ -155,49 +154,42 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
           grid-template-areas: "stack";
           overflow: hidden;
         }
-        
-        .stack-layer { grid-area: stack; width: 100%; height: 100%; }
-        
+
+        .stack-layer {
+          grid-area: stack;
+          width: 100%;
+          height: 100%;
+        }
+
         .work-media-wrap {
           position: relative;
           overflow: hidden;
           z-index: 1;
-          transition: filter 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-          will-change: filter, transform;
+          will-change: transform, filter;
+          transform: translateZ(0);
+          backface-visibility: hidden;
         }
 
-        .work-media-wrap.inactive {
-          filter: blur(30px);
-          transform: scale(1.1);
-        }
-
-        .work-media-wrap.active {
-          filter: blur(0px);
-          transform: scale(1);
-        }
-
-        .work-media-wrap video, .work-media-wrap img, .work-media-wrap div {
-          width: 100%; 
-          height: 100%; 
-          object-fit: cover; 
+        .work-media-wrap video,
+        .work-media-wrap img,
+        .work-media-wrap div {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
           display: block;
         }
 
         .fallback-image {
           position: absolute;
-          top: 0;
-          left: 0;
+          inset: 0;
         }
 
         .work-dimmer {
           z-index: 2;
           background: #000;
-          transition: opacity 0.5s ease;
           pointer-events: none;
+          will-change: opacity;
         }
-
-        .work-dimmer.active { opacity: 0; }
-        .work-dimmer.inactive { opacity: 0.5; }
 
         .work-ui {
           z-index: 3;
@@ -211,44 +203,83 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
           pointer-events: none;
         }
 
-        .work-brand { 
-          font-family: 'TGFont', sans-serif; 
-          font-size: clamp(35px, 12vw, 100px); 
-          font-weight: 900; 
-          text-transform: uppercase; 
-          line-height: 0.8; 
-          letter-spacing: -0.08em; 
+        .work-brand {
+          font-family: 'TGFont', sans-serif;
+          font-size: clamp(35px, 12vw, 100px);
+          font-weight: 900;
+          text-transform: uppercase;
+          line-height: 0.8;
+          letter-spacing: -0.08em;
+          margin: 0;
         }
 
-        .work-title { 
-          font-size: 24px; 
-          text-transform: uppercase; 
-          opacity: 0.8; 
-          margin-top: 5px; 
-          font-style: italic; 
-          font-weight: 700; 
+        .work-title {
+          font-size: 24px;
+          text-transform: uppercase;
+          opacity: 0.8;
+          margin-top: 5px;
+          margin-bottom: 0;
+          font-style: italic;
+          font-weight: 700;
           letter-spacing: -0.007em;
         }
 
-        .work-index { 
-          font-size: 12px; 
-          opacity: 0.4; 
-          margin-top: 8px; 
+        .work-index {
+          font-size: 12px;
+          opacity: 0.4;
+          margin-top: 8px;
+          margin-bottom: 0;
         }
 
+        /* MOBILE ONLY FIXES */
         @media (max-width: 768px) {
-          .work-title { font-size: 16px; }
+          .work-slide {
+            height: 50svh;
+          }
+
+          .work-brand {
+            font-size: clamp(35px, 12vw, 60px) !important;
+          }
+
+          .work-title {
+            font-size: 16px;
+          }
+
+          .work-ui {
+            padding: 20px !important;
+            justify-content: flex-start !important;
+          }
+
+          /*
+            Important:
+            Heavy blur on mobile video is the main visual glitch.
+            Desktop keeps the original blur effect.
+          */
+          .work-media-wrap {
+            filter: none !important;
+            will-change: transform;
+          }
         }
       `}</style>
 
       <motion.div className="slide-inner" style={{ y: yOffset }}>
-        {/* Layer 1: Media */}
-        <div
-          className={`stack-layer work-media-wrap ${isActive ? "active" : "inactive"}`}
+        <motion.div
+          className="stack-layer work-media-wrap"
+          style={{
+            scale,
+            filter,
+          }}
         >
           {work.video ? (
             <ImageKitProvider urlEndpoint="https://ik.imagekit.io/onesix">
-              <Video src={work.video} autoPlay muted loop playsInline />
+              <Video
+                src={work.video}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+              />
             </ImageKitProvider>
           ) : work.brand === "Wingstop UK" ? (
             <ImageKitProvider urlEndpoint="https://ik.imagekit.io/onesix">
@@ -258,32 +289,27 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
               />
             </ImageKitProvider>
           ) : work.brand === "Nike Football" ? (
-            <ImageKitProvider urlEndpoint="https://ik.imagekit.io/onesix">
-              <img
-                src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/NIKE2405_ViniJrDisruptor_ProductStills_Shot_06_220224_AB_0014-1-scaled-optimized.jpg.jpeg?updatedAt=1779162547523"
-                alt="Nike Football"
-                className="fallback-image"
-              />
-            </ImageKitProvider>
+            <img
+              src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/NIKE2405_ViniJrDisruptor_ProductStills_Shot_06_220224_AB_0014-1-scaled-optimized.jpg.jpeg?updatedAt=1779162547523"
+              alt="Nike Football"
+              className="fallback-image"
+            />
           ) : work.brand === "Under Armour" ? (
-            <ImageKitProvider urlEndpoint="https://ik.imagekit.io/onesix">
-              <img
-                src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/ROSS-STILLS_1.44.1-1-min-2048x1152-optimized.png.?updatedAt=1779162547539"
-                alt="Under Armour"
-                className="fallback-image"
-              />
-            </ImageKitProvider>
+            <img
+              src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/ROSS-STILLS_1.44.1-1-min-2048x1152-optimized.png.?updatedAt=1779162547539"
+              alt="Under Armour"
+              className="fallback-image"
+            />
           ) : (
             <div style={{ background: "#111" }} />
           )}
-        </div>
+        </motion.div>
 
-        {/* Layer 2: Dimmer */}
-        <div
-          className={`stack-layer work-dimmer ${isActive ? "active" : "inactive"}`}
+        <motion.div
+          className="stack-layer work-dimmer"
+          style={{ opacity: dimOpacity }}
         />
 
-        {/* Layer 3: UI Content */}
         <div className="stack-layer work-ui">
           <div className="work-content">
             <h2 className="work-brand">{work.brand}</h2>
