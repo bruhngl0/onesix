@@ -105,16 +105,16 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
 
   const [isActive, setIsActive] = useState(false);
 
-  // Toggle active state instantly at 0.25 (entering mid) and 0.75 (leaving mid)
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    if (latest >= 0.25 && latest < 0.75) {
+    // Narrower active window for 50vh blocks to ensure focus
+    if (latest >= 0.35 && latest < 0.65) {
       setIsActive(true);
     } else {
       setIsActive(false);
     }
   });
 
-  // Margin effect: starts pushed down, shrinks to 0 exactly when it reaches the center (0.25)
+  // Vertical parallax/entrance effect
   const yOffset = useTransform(scrollYProgress, [0, 0.25, 1], [20, 0, 0]);
 
   return (
@@ -125,13 +125,29 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
           src: url('/tg.otf') format('opentype');
           font-display: swap;
         }
+        
         .work-slide {
           position: relative;
           width: 100%;
-          height: 100vh;
+          height: 100vh; /* Desktop Default */
           background: #fff;
           overflow: hidden;
         }
+
+        /* MOBILE HEIGHT OVERRIDE */
+        @media (max-width: 768px) {
+          .work-slide {
+            height: 50vh; 
+          }
+          .work-brand {
+            font-size: clamp(35px, 12vw, 60px) !important;
+          }
+          .work-ui {
+            padding: 20px !important;
+            justify-content: start !important; /* Centers text vertically in the 50vh block */
+          }
+        }
+
         .slide-inner {
           width: 100%;
           height: 100%;
@@ -139,56 +155,49 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
           grid-template-areas: "stack";
           overflow: hidden;
         }
+        
         .stack-layer { grid-area: stack; width: 100%; height: 100%; }
         
-        /* THE MEDIA CONTAINER */
         .work-media-wrap {
           position: relative;
           overflow: hidden;
           z-index: 1;
-          transition: filter 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+          transition: filter 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
           will-change: filter, transform;
+        }
+
+        .work-media-wrap.inactive {
+          filter: blur(30px);
+          transform: scale(1.1);
+        }
+
+        .work-media-wrap.active {
+          filter: blur(0px);
+          transform: scale(1);
+        }
+
+        .work-media-wrap video, .work-media-wrap img, .work-media-wrap div {
+          width: 100%; 
+          height: 100%; 
+          object-fit: cover; 
+          display: block;
         }
 
         .fallback-image {
           position: absolute;
           top: 0;
           left: 0;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        /* ACTIVE STATE (Sharp) */
-        .work-media-wrap.active {
-          filter: blur(0px);
-          transform: scale(1);
-        }
-
-        /* INACTIVE STATE (Blurred) */
-        .work-media-wrap.inactive {
-          filter: blur(40px);
-          transform: scale(1.1);
-        }
-
-        .work-media-wrap div, .work-media-wrap video, .work-media-wrap img {
-          width: 100%; height: 100%; object-fit: cover; display: block;
         }
 
         .work-dimmer {
           z-index: 2;
           background: #000;
-          transition: opacity 0.4s ease;
+          transition: opacity 0.5s ease;
           pointer-events: none;
         }
 
-        .work-dimmer.active {
-          opacity: 0;
-        }
-
-        .work-dimmer.inactive {
-          opacity: 0.6;
-        }
+        .work-dimmer.active { opacity: 0; }
+        .work-dimmer.inactive { opacity: 0.5; }
 
         .work-ui {
           z-index: 3;
@@ -196,41 +205,44 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
-          padding: 30px 40px;
+          padding: 30px 20px;
           color: white;
           font-family: 'Barlow Condensed', sans-serif;
           pointer-events: none;
         }
 
-        .work-brand { font-family: 'TGFont', sans-serif; font-size: clamp(35px, 12vw, 100px); font-weight: 900; font-style: normal; text-transform: uppercase; line-height: 0.8; letter-spacing: -0.08em; }
-        .work-title { font-size: 24px; text-transform: uppercase; opacity: 0.8; margin-top: 0px; font-style: italic; font-weight: 700; letter-spacing: -0.007em;}
-        .work-index { font-size: 12px; opacity: 0.4; margin-top: 5px; }
-
-        .work-cta {
-          position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-          border: 1px solid rgba(255,255,255,0.3); padding: 12px 30px;
-          text-decoration: none; color: white; font-weight: 600; letter-spacing: 0.1em;
-          pointer-events: auto; transition: 0.3s;
+        .work-brand { 
+          font-family: 'TGFont', sans-serif; 
+          font-size: clamp(35px, 12vw, 100px); 
+          font-weight: 900; 
+          text-transform: uppercase; 
+          line-height: 0.8; 
+          letter-spacing: -0.08em; 
         }
-        .work-cta:hover { background: white; color: black; }
+
+        .work-title { 
+          font-size: 24px; 
+          text-transform: uppercase; 
+          opacity: 0.8; 
+          margin-top: 5px; 
+          font-style: italic; 
+          font-weight: 700; 
+          letter-spacing: -0.007em;
+        }
+
+        .work-index { 
+          font-size: 12px; 
+          opacity: 0.4; 
+          margin-top: 8px; 
+        }
 
         @media (max-width: 768px) {
-          .work-ui {
-            padding: 20px;
-          }
-          .work-title {
-            font-size: 16px;
-            margin-top: 4px;
-          }
-          .work-cta {
-            padding: 8px 20px;
-            font-size: 11px;
-          }
+          .work-title { font-size: 16px; }
         }
       `}</style>
 
       <motion.div className="slide-inner" style={{ y: yOffset }}>
-        {/* Layer 1: The Video/Media */}
+        {/* Layer 1: Media */}
         <div
           className={`stack-layer work-media-wrap ${isActive ? "active" : "inactive"}`}
         >
@@ -243,7 +255,6 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
               <Image
                 src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/videoframe_1714-min-optimized.jpg.jpeg?updatedAt=1779162547441"
                 alt="Wingstop UK"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
             </ImageKitProvider>
           ) : work.brand === "Nike Football" ? (
@@ -263,16 +274,16 @@ function WorkSlide({ work }: { work: (typeof works)[0] }) {
               />
             </ImageKitProvider>
           ) : (
-            <div style={{ background: "#111", height: "100%" }} />
+            <div style={{ background: "#111" }} />
           )}
         </div>
 
-        {/* Layer 2: Black Dimmer */}
+        {/* Layer 2: Dimmer */}
         <div
           className={`stack-layer work-dimmer ${isActive ? "active" : "inactive"}`}
         />
 
-        {/* Layer 3: UI */}
+        {/* Layer 3: UI Content */}
         <div className="stack-layer work-ui">
           <div className="work-content">
             <h2 className="work-brand">{work.brand}</h2>

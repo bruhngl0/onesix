@@ -228,6 +228,7 @@ export default function HUD() {
           .hud-menu  { top: 10px; font-size: 11px; }
           .hud-scroll, .hud-times { display: none; }
           .hud-tunes { bottom: 14px; right: 14px; font-size: 11px; }
+.hud-nav-link{font-size: 6rem;}
         }
       `}</style>
 
