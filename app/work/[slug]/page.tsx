@@ -1,5 +1,7 @@
 // app/work/[slug]/page.tsx
-// ... imports
+import { getProject } from "../../../data.js";
+import ProjectPage from "../../components/Projectpage";
+import { notFound } from "next/navigation";
 
 export default async function WorkDetail({
   params,
