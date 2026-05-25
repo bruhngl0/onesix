@@ -28,6 +28,7 @@ interface WorkItem {
   services: string[];
   industries: string[];
   imageSrcSet: string;
+  imageSizes: string;
 }
 
 // ─── Data ────────────────────────────────────────────────────────────────────
