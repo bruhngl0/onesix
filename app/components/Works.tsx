@@ -120,7 +120,7 @@ function WorkMedia({
     return (
       <ImageKitProvider urlEndpoint="https://ik.imagekit.io/onesix">
         <Image
-          src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/videoframe_1714-min-optimized.jpg.jpeg?updatedAt=1779162547441"
+          src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/videoframe_1714-min-optimized.jpg.jpeg?updatedAt=1779162547441&tr=f-auto,q-80,w-1920"
           alt="Wingstop UK"
         />
       </ImageKitProvider>
@@ -129,21 +129,25 @@ function WorkMedia({
 
   if (work.brand === "Nike Football") {
     return (
-      <img
-        src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/NIKE2405_ViniJrDisruptor_ProductStills_Shot_06_220224_AB_0014-1-scaled-optimized.jpg.jpeg?updatedAt=1779162547523"
-        alt="Nike Football"
-        className="fallback-image"
-      />
+      <ImageKitProvider urlEndpoint="https://ik.imagekit.io/onesix">
+        <Image
+          src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/NIKE2405_ViniJrDisruptor_ProductStills_Shot_06_220224_AB_0014-1-scaled-optimized.jpg.jpeg?updatedAt=1779162547523&tr=f-auto,q-80,w-1920"
+          alt="Nike Football"
+          className="fallback-image"
+        />
+      </ImageKitProvider>
     );
   }
 
   if (work.brand === "Under Armour") {
     return (
-      <img
-        src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/ROSS-STILLS_1.44.1-1-min-2048x1152-optimized.png.?updatedAt=1779162547539"
-        alt="Under Armour"
-        className="fallback-image"
-      />
+      <ImageKitProvider urlEndpoint="https://ik.imagekit.io/onesix">
+        <Image
+          src="https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/ROSS-STILLS_1.44.1-1-min-2048x1152-optimized.png.?updatedAt=1779162547539&tr=f-auto,q-80,w-1920"
+          alt="Under Armour"
+          className="fallback-image"
+        />
+      </ImageKitProvider>
     );
   }
 

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
+
 
 const SlapsLogo = ({ color = "#fff" }: { color?: string }) => (
   <svg
@@ -36,7 +37,6 @@ const NAV_ROUTES: Record<NavItem, string> = {
 
 export default function HUD() {
   const router = useRouter();
-  const pathname = usePathname();
 
   const [scrollPct, setScrollPct] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -44,11 +44,6 @@ export default function HUD() {
     barcelona: "",
     newYork: "",
   });
-
-  // Close menu on route change
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [pathname]);
 
   // Clock
   useEffect(() => {
@@ -93,6 +88,12 @@ export default function HUD() {
     setIsMenuOpen(false);
     router.push(NAV_ROUTES[item]);
   };
+
+  const handleLogoClick = () => {
+    setIsMenuOpen(false);
+    router.push("/");
+  };
+
 
   return (
     <>
@@ -267,7 +268,7 @@ export default function HUD() {
       {/* HUD chrome — mix-blend-mode: difference auto-inverts over any background */}
       <div className={`hud-shell ${isMenuOpen ? "hud-shell--menu-open" : ""}`}>
         {/* Logo: SVG fill must also be white for blend mode to work */}
-        <div className="hud-el hud-logo" onClick={() => router.push("/")}>
+        <div className="hud-el hud-logo" onClick={handleLogoClick}>
           <SlapsLogo color={isMenuOpen ? "#000" : "#fff"} />
         </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -64,7 +65,11 @@ const MediaItem = ({ item, fill = false }: MediaItemProps) => {
     const togglePlay = (e: React.MouseEvent) => {
       e.stopPropagation();
       if (!videoRef.current) return;
-      playing ? videoRef.current.pause() : videoRef.current.play();
+      if (playing) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
     };
     const toggleMute = (e: React.MouseEvent) => {
       e.stopPropagation();
@@ -85,6 +90,7 @@ const MediaItem = ({ item, fill = false }: MediaItemProps) => {
           src={item.src}
           poster={item.poster}
           muted={muted}
+          preload="metadata"
           loop
           playsInline
           onPlay={() => setPlaying(true)}
@@ -190,13 +196,11 @@ const MediaItem = ({ item, fill = false }: MediaItemProps) => {
 
   return (
     <div style={wrapStyle} className="slaps-media">
-      <img
+      <Image
         src={item.src}
         alt=""
+        fill
         style={{
-          width: "100%",
-          height: fill ? "100%" : "auto",
-          display: "block",
           objectFit: "cover",
         }}
       />

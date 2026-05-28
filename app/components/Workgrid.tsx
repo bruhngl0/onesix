@@ -1,21 +1,14 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { getCookie, setCookie } from "../utils/cookies";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 type FilterType = "clients" | "services" | "industries" | "all";
 
-type Category =
-  | "all"
-  | "sports"
-  | "lifestyle"
-  | "luxury"
-  | "music"
-  | "food"
-  | "auto";
 
 interface WorkItem {
   id: number;
@@ -312,9 +305,8 @@ function WorkCard({ item }: { item: WorkItem }) {
       <Link href={item.href} className="project-link">
         {/* Static preview image */}
         <div className="preview">
-          <img
+          <Image
             src={item.image}
-            srcSet={item.imageSrcSet}
             sizes={item.imageSizes ?? "20vw"}
             alt={`${item.client} — ${item.title}`}
             className="preview-img"
@@ -339,7 +331,7 @@ function WorkCard({ item }: { item: WorkItem }) {
             ref={videoRef}
             width={320}
             height={240}
-            preload="none"
+            preload="metadata"
             playsInline
             loop
             muted
@@ -420,6 +412,37 @@ export default function WorkGrid() {
   const [clientFilter, setClientFilter] = useState<string | null>(null);
   const [serviceFilter, setServiceFilter] = useState<string | null>(null);
   const [industryFilter, setIndustryFilter] = useState<string | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Load preferences from cookies on mount (hydration-safe)
+  useEffect(() => {
+    const savedTab = getCookie("workgrid-active-tab") as FilterType | null;
+    const savedClient = getCookie("workgrid-client-filter");
+    const savedService = getCookie("workgrid-service-filter");
+    const savedIndustry = getCookie("workgrid-industry-filter");
+
+    Promise.resolve().then(() => {
+      if (savedTab) setActiveTab(savedTab);
+      if (savedClient) setClientFilter(savedClient);
+      if (savedService) setServiceFilter(savedService);
+      if (savedIndustry) setIndustryFilter(savedIndustry);
+      setIsLoaded(true);
+    });
+  }, []);
+
+  // Save preferences to cookies whenever they change (post-mount)
+  useEffect(() => {
+    if (!isLoaded) return;
+    setCookie("workgrid-active-tab", activeTab, 7);
+    if (clientFilter) setCookie("workgrid-client-filter", clientFilter, 7);
+    else setCookie("workgrid-client-filter", "", -1);
+
+    if (serviceFilter) setCookie("workgrid-service-filter", serviceFilter, 7);
+    else setCookie("workgrid-service-filter", "", -1);
+
+    if (industryFilter) setCookie("workgrid-industry-filter", industryFilter, 7);
+    else setCookie("workgrid-industry-filter", "", -1);
+  }, [activeTab, clientFilter, serviceFilter, industryFilter, isLoaded]);
 
   const filtered = WORK_ITEMS.filter((item) => {
     if (clientFilter && !item.clients.includes(clientFilter)) return false;

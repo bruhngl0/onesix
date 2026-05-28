@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Image, ImageKitProvider } from "@imagekit/react";
+import Image from "next/image";
+
 
 const logos = [
   { name: "Logo 1", url: "https://ik.imagekit.io/onesix/brandingthatslaps.com_2147c88a-c7c0-4920-8ad4-30fff588c99c/Artboard-2-4-optimized.png?updatedAt=1779162546896" },
@@ -174,20 +175,21 @@ const Company = () => {
       </h1>
 
       <div className="logo-grid">
-        {logos.map((logo, index) => (
-          <div key={index} className="logo-item">
-            <img
-              src={logo.url}
-              alt={`${logo.name} logo`}
-              className="logo-img"
-              // Fallback for demo if crawler blocked
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
-            />
-
-          </div>
-        ))}
+        {logos.map((logo, index) => {
+          const optimizedUrl = `${logo.url}&tr=f-auto,q-80,w-240`;
+          return (
+            <div key={index} className="logo-item">
+              <Image
+                src={optimizedUrl}
+                alt={`${logo.name} logo`}
+                className="logo-img"
+                width={240}
+                height={80}
+                style={{ objectFit: "contain" }}
+              />
+            </div>
+          );
+        })}
       </div>
 
       <h1 className="work-with-us">WORK WITH US</h1>
